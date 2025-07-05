@@ -11,14 +11,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+
+        http.csrf(ServerHttpSecurity.CsrfSpec::disable);
         http
                 .authorizeExchange(exchange -> exchange
+                        .pathMatchers("/auth/register").permitAll()
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(Customizer.withDefaults())
                 );
-        http.csrf(ServerHttpSecurity.CsrfSpec::disable);
         return http.build();
     }
 }
