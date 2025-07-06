@@ -6,18 +6,27 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import reactor.core.publisher.Mono;
 
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
-
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .authorizeExchange(exchanges -> exchanges
-                        .anyExchange().permitAll()
+                .authorizeExchange(exchange -> exchange
+                        .pathMatchers("/auth/register").permitAll()
+                        .anyExchange().authenticated()
+                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((exchange, ex2) -> Mono.empty())
+                )
+                .oauth2ResourceServer(resource -> resource
+                        .bearerTokenConverter(new CustomBearerTokenAuthenticationConverter())
+                        .jwt(Customizer.withDefaults())
                 )
                 .build();
     }
 }
+

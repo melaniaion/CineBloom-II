@@ -12,6 +12,12 @@ public class GatewayRoutesConfig {
     @Bean
     public RouteLocator customRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
+
+                .route("authservice_route", r -> r
+                        .path("/auth/**")
+                        .uri("lb://AUTHSERVICE")
+                )
+
                 .route("mainservice_route", r -> r
                         .path("/cinebloom/main/**")
                         .filters(f -> f.rewritePath("/cinebloom/main/(?<segment>.*)", "/${segment}")
@@ -27,6 +33,13 @@ public class GatewayRoutesConfig {
                                 })
                         )
                         .uri("lb://MAINSERVICE"))
+
+                .route("test_route", r -> r
+                        .path("/test/hello")
+                        .filters(f -> f.rewritePath("/test/hello", "/actuator/health"))
+                        .uri("lb://AUTHSERVICE"))
+
+
                 .build();
     }
 }
