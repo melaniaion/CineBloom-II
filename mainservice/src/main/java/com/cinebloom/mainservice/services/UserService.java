@@ -24,13 +24,14 @@ public class UserService {
     private Resource defaultUserImage;
 
     public User ensureUserExists(JwtAuthenticationToken jwt) {
-        String username = jwt.getName(); // comes from token
+        String username = jwt.getToken().getClaim("preferred_username");
+        String email = jwt.getToken().getClaim("email");
 
         return userRepo.findByUsername(username)
                 .orElseGet(() -> {
                     User newUser = User.builder()
                             .username(username)
-                            .email(jwt.getToken().getClaim("email"))
+                            .email(email)
                             .bio("")
                             .build();
                     return userRepo.save(newUser);
@@ -41,6 +42,7 @@ public class UserService {
     }
 
     public User getCurrentUser(JwtAuthenticationToken jwt) {
+        System.out.println("service - melania- JWT USERNAME: " + jwt.getToken().getClaim("preferred_username"));
         String username = jwt.getToken().getClaimAsString("preferred_username");
 
         return userRepo.findByUsername(username)

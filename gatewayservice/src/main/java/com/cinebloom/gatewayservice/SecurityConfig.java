@@ -17,9 +17,11 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers("/css/**", "/js/**",       // allow static CSS/JS
-                                "/images/**", "/webjars/**" // allow images and WebJars
+                                "/images/**", "/webjars/**",  // allow images and WebJars
+                                "/users/**"
                         ).permitAll()
                         .pathMatchers("/", "/auth/register").permitAll()
+                        .pathMatchers("/profile").authenticated()
                         .anyExchange().authenticated()
                 )
                 .exceptionHandling(ex -> ex

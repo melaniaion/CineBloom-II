@@ -22,6 +22,11 @@ public class GatewayRoutesConfig {
                         .path("/**")
                         .uri("lb://MAINSERVICE"))
 
+                .route("profile_route", r -> r
+                        .path("/profile", "/users/**")
+                        .uri("lb://mainservice")
+                )
+
                 .route("homepage_route", r -> r
                         .path("/")
                         .uri("lb://MAINSERVICE"))

@@ -18,6 +18,8 @@ public class UserController {
 
     @GetMapping("/profile")
     public String getProfile(JwtAuthenticationToken jwt, Model model) {
+        System.out.println("controller- melania- JWT USERNAME: " + jwt.getToken().getClaim("preferred_username"));
+
         try {
             UserProfileDTO profile = userService.getProfile(jwt);
             model.addAttribute("profile", profile);
