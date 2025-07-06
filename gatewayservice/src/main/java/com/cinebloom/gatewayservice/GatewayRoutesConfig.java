@@ -13,10 +13,18 @@ public class GatewayRoutesConfig {
     public RouteLocator customRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
 
-                .route("authservice_route", r -> r
-                        .path("/auth/**")
-                        .uri("lb://AUTHSERVICE")
-                )
+                .route("static_resources", r -> r
+                        .path("/css/**", "/js/**", "/images/**", "/webjars/**")
+                        .filters(f -> f.rewritePath("(?<segment>/.*)", "/${segment}"))
+                        .uri("lb://mainservice"))
+
+                .route("mainservice_route", r -> r
+                        .path("/**")
+                        .uri("lb://MAINSERVICE"))
+
+                .route("homepage_route", r -> r
+                        .path("/")
+                        .uri("lb://MAINSERVICE"))
 
                 .route("mainservice_route", r -> r
                         .path("/cinebloom/main/**")

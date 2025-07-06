@@ -16,12 +16,16 @@ public class SecurityConfig {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchange -> exchange
-                        .pathMatchers("/auth/register").permitAll()
+                        .pathMatchers("/css/**", "/js/**",       // allow static CSS/JS
+                                "/images/**", "/webjars/**" // allow images and WebJars
+                        ).permitAll()
+                        .pathMatchers("/", "/auth/register").permitAll()
                         .anyExchange().authenticated()
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((exchange, ex2) -> Mono.empty())
                 )
+                .oauth2Login(Customizer.withDefaults())
                 .oauth2ResourceServer(resource -> resource
                         .bearerTokenConverter(new CustomBearerTokenAuthenticationConverter())
                         .jwt(Customizer.withDefaults())
